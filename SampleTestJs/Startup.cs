@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using SampleTestJs.Controllers;
+using SampleTestJs.JsonFile;
 using SampleTestJs.Repository;
 
 
@@ -29,8 +30,8 @@ namespace SampleTestJs
 
             services.AddSingleton<UserRepository>();
             services.AddScoped<UserController>();
+            services.AddScoped<FileJsonWriter>();
         }
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

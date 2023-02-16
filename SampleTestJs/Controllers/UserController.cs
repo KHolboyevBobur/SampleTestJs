@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using SampleTestJs.JsonFile;
 using SampleTestJs.Repository;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +12,11 @@ namespace SampleTestJs.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserRepository _userRepository;
-
-        public UserController(UserRepository userRepository)
+        private readonly FileJsonWriter _filejsonWriter;
+        public UserController(UserRepository userRepository, FileJsonWriter fileJsonWriter)
         {
             _userRepository = userRepository;
+            _filejsonWriter = fileJsonWriter;
         }
 
         [HttpGet]
@@ -36,8 +39,16 @@ namespace SampleTestJs.Controllers
         [HttpPost]
         public ActionResult<UserModel> Add(UserModel user)
         {
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
             _userRepository.Add(user);
-            return CreatedAtAction(nameof(GetById), new { id = _userRepository.GetAll().Count() - 1 }, user);
+            string userData = JsonConvert.SerializeObject(user);
+            _filejsonWriter.WriteToFile(userData);
+
+            return Ok(user);
         }
 
         [HttpPut("{id}")]
